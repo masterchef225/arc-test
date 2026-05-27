@@ -1,0 +1,35 @@
+name: docker-build-dryrun
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'Dockerfile'
+      - '.github/workflows/docker-build.yml'
+
+jobs:
+  build:
+    runs-on: arc-runner-set
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: docker info
+        run: |
+          docker version
+          docker info
+
+      - name: set up buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: dry-run build (no push, no load)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          push: false
+          load: false
+          tags: arc-test:dryrun
+
+      - name: lint Dockerfile (buildx check)
+        run: docker buildx build --check .

@@ -12,3 +12,5 @@ app.get('/', (_req, res) => {
 app.get('/health', (_req, res) => res.send('ok'));
 
 app.listen(port, () => log.info(`listening on ${port}`));
+
+
